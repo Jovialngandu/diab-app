@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déconnexion - Application de Médecine Diabète</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/diab/css/flowbite.min-2.3.0.css' %}">
+    <script src="{% static '/diab/js/flowbite.min-2.3.0.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/diab/css/all.min.css' %}">
+    <script src="{% static '/diab/js/gsap.min.js'%}"></script>
+    <link href="{% static '/diab/css/css2.css' %}" rel="stylesheet">
+  
+    
+    <style>
+        .neumorphic {
+            box-shadow: 5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .bg-primary
+        {
+            background-color:#3498db !important ;
+        }
+        .bg-secondary
+        {
+            background-color:#2ecc71 !important  ;
+        }
+        .text-primary
+        {
+           color:#3498db !important ;
+        }
+        .text-secondary
+        {
+            color:#2ecc71 !important  ;
+        }
+    </style>
+</head>
+<body class="bg-neutral font-sans min-h-screen flex flex-col">
+    <div class="flex-grow container mx-auto px-4 py-8 flex flex-col items-center justify-center">
+        <div class="bg-white neumorphic rounded-lg p-8 max-w-md w-full text-center">
+            <div class="mb-8">
+                <svg class="w-24 h-24 mx-auto pulse-animation" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 16L21 12M21 12L17 8M21 12H9M9 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H9" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h1 id="logoutTitle" class="text-3xl font-bold text-primary mb-4">Déconnexion en cours...</h1>
+            <p id="logoutMessage" class="text-xl text-gray-600 mb-8">Nous sécurisons votre session. Veuillez patienter.</p>
+            <div id="progressBar" class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                <div class="bg-secondary h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+            <button id="returnHomeBtn" onclick="window.location.href='/'" class="bg-primary text-white px-6 py-3 rounded-md hover:bg-blue-600 transition duration-300 w-full hidden">
+                Retour à l'accueil
+            </button>
+        </div>
+    </div>
+
+    <footer class="bg-white py-4">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>&copy; 2024 Application de Médecine Diabète. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const logoutTitle = document.getElementById('logoutTitle');
+            const logoutMessage = document.getElementById('logoutMessage');
+            const progressBar = document.getElementById('progressBar').querySelector('div');
+            const returnHomeBtn = document.getElementById('returnHomeBtn');
+
+            // Simuler le processus de déconnexion
+            gsap.to(progressBar, {
+                width: '100%',
+                duration: 3,
+                ease: 'power1.inOut',
+                onComplete: () => {
+                    logoutTitle.textContent = 'Déconnexion réussie';
+                    logoutMessage.textContent = 'Votre session a été fermée en toute sécurité.';
+                    returnHomeBtn.classList.remove('hidden');
+                    gsap.from(returnHomeBtn, {
+                        opacity: 0,
+                        y: 20,
+                        duration: 0.5,
+                        ease: 'power2.out'
+                    });
+                }
+            });
+
+            // Animation du titre et du message
+            gsap.from("#logoutTitle, #logoutMessage", {
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power3.out"
+            });
+
+            // Ici, vous devriez ajouter le code pour effectuer la déconnexion réelle
+            // Par exemple, une requête AJAX pour invalider la session côté serveur
+            // fetch('/api/logout', { method: 'POST', credentials: 'include' })
+            //     .then(response => {
+            //         if (response.ok) {
+            //             console.log('Déconnexion réussie');
+            //         } else {
+            //             console.error('Erreur lors de la déconnexion');
+            //         }
+            //     });
+        });
+    </script>
+</body>
+</html>
