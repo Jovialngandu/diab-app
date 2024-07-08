@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des Consultations - Application Hôpital</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/diab/css/flowbite.min-2.3.0.css' %}">
+    <script src="{% static '/diab/js/flowbite.min-2.3.0.js' %}"></script>
+    <script src="{% static '/diab/js/gsap.min.js'%}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#3b82f6',
+                        'secondary': '#10b981',
+                        'accent': '#f59e0b',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* .neumorphic {
+            box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff;
+        }
+        .neumorphic-inset {
+            box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff;
+        } */
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .bg-primary
+        {
+            background-color:#3498db !important ;
+        }
+        .bg-secondary
+        {
+            background-color:#2ecc71 !important  ;
+        }
+        .text-primary
+        {
+           color:#3498db !important ;
+        }
+        .text-secondary
+        {
+            color:#2ecc71 !important  ;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <!-- <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-primary">Historique des Consultations</h1>
+            <nav>
+                <a href="#" class="text-gray-600 hover:text-primary mr-4">Accueil</a>
+                <a href="#" class="text-gray-600 hover:text-primary">Tableau de bord</a>
+            </nav>
+        </div>
+    </header> -->
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="bg-white neumorphic rounded-lg p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-primary">Liste des Consultations</h2>
+
+                <div class="flex space-x-4">
+                    <input type="text" id="searchInput" placeholder="Rechercher..." class="px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary">
+                    <select id="sortSelect" class="px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary">
+                        <option value="date">Trier par date</option>
+                        <option value="name">Trier par nom</option>
+                    </select>
+                        
+                    
+                </div>
+
+            </div>
+            <ul id="consultationList" class="space-y-4">
+                <!-- La liste des consultations sera ajoutée ici dynamiquement -->
+            </ul>
+            <div class="mt-6 flex justify-between items-center">
+                <button id="" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded-md neumorphic btn-hover">
+                    <a href="/diab/" class=" text-white font-semibold py-2 px-4 rounded-md text-center">Retour</a>
+
+                </button>
+                <p id="totalConsultations" class="text-gray-600"></p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white py-4 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>&copy; 2024 Application Hôpital. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Données d'exemple pour les consultations
+        let consultations = [
+            { id: 1, patientName: "Jean Dupont", date: "2023-05-15", description: "Douleurs abdominales chroniques, suspicion de colite", status: "Terminée" },
+            { id: 2, patientName: "Marie Martin", date: "2023-05-14", description: "Suivi post-opératoire pour une appendicectomie", status: "Terminée" },
+            { id: 3, patientName: "Pierre Durand", date: "2023-05-13", description: "Consultation de routine pour diabète de type 2", status: "Terminée" },
+            { id: 4, patientName: "Sophie Lefebvre", date: "2023-05-12", description: "Examen de la thyroïde, résultats d'analyses à discuter", status: "Terminée" },
+            { id: 5, patientName: "Luc Moreau", date: "2023-05-11", description: "Suivi d'une hypertension artérielle, ajustement du traitement", status: "Terminée" },
+        ];
+
+        const consultationList = document.getElementById('consultationList');
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
+        const totalConsultations = document.getElementById('totalConsultations');
+
+        // Fonction pour afficher la liste des consultations
+        function displayConsultations(consultationsToDisplay) {
+            consultationList.innerHTML = '';
+            consultationsToDisplay.forEach(consultation => {
+                const li = document.createElement('li');
+                li.className = 'bg-gray-50 p-4 rounded-md neumorphic';
+                consultation.status='';
+                li.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-secondary">${consultation.patientName}</h3>
+                        <span class="text-sm text-gray-500">${consultation.date}</span>
+                    </div>
+                    <p class="text-gray-600 mt-2">${consultation.description}</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">${consultation.status}</span>
+                        <a href="#" class="text-primary hover:underline" onclick="viewConsultationDetails(${consultation.id})">Voir les détails</a>
+                    </div>
+                `;
+                consultationList.appendChild(li);
+            });
+            totalConsultations.textContent = ` Total: ${consultationsToDisplay.length} consultation(s)`;
+        }
+
+        // Fonction pour filtrer les consultations
+        function filterConsultations() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredConsultations = consultations.filter(consultation => 
+                consultation.patientName.toLowerCase().includes(searchTerm) ||
+                consultation.description.toLowerCase().includes(searchTerm)
+            );
+            displayConsultations(filteredConsultations);
+        }
+
+        // Fonction pour trier les consultations
+        function sortConsultations() {
+            const sortBy = sortSelect.value;
+            consultations.sort((a, b) => {
+                if (sortBy === 'date') {
+                    return new Date(b.date) - new Date(a.date);
+                } else {
+                    return a.patientName.localeCompare(b.patientName);
+                }
+            });
+            displayConsultations(consultations);
+        }
+
+        // Fonction pour voir les détails d'une consultation
+        function viewConsultationDetails(id) {
+            console.log(`Afficher les détails de la consultation ${id}`);
+            // Ici, vous redirigeriez normalement vers une page de détails de consultation
+            showNotification(`Détails de la consultation ${id} affichés`, 'success');
+        }
+
+        // Fonction pour afficher une notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-4 right-4 p-4 rounded-md ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            gsap.from(notification, {
+                opacity: 0,
+                y: 50,
+                duration: 0.5,
+                ease: "power2.out"
+            });
+
+            setTimeout(() => {
+                gsap.to(notification, {
+                    opacity: 0,
+                    y: 50,
+                    duration: 0.5,
+                    ease: "power2.in",
+                    onComplete: () => notification.remove()
+                });
+            }, 3000);
+        }
+
+        // Événements
+        searchInput.addEventListener('input', filterConsultations);
+        sortSelect.addEventListener('change', sortConsultations);
+        // loadMore.addEventListener('click', () => {
+        //     // Simuler le chargement de plus de consultations
+        //     const newConsultations = [
+        //         { id: 6, patientName: "Emma Dubois", date: "2023-05-10", description: "Consultation pour migraines chroniques", status: "Terminée" },
+        //         { id: 7, patientName: "Thomas Bernard", date: "2023-05-09", description: "Suivi d'une fracture du poignet", status: "Terminée" },
+        //     ];
+        //     consultations = [...consultations, ...newConsultations];
+        //     displayConsultations(consultations);
+        //     showNotification("Nouvelles consultations chargées", 'success');
+        // });
+
+        // Initialiser la page
+        displayConsultations(consultations);
+
+        // // Animation initiale
+        // gsap.from(".neumorphic", {
+        //     opacity: 0,
+        //     y: 50,
+        //     duration: 1,
+        //     stagger: 0.2,
+        //     ease: "power3.out"
+        // });
+    </script>
+</body>
+</html>

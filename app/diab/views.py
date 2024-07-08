@@ -25,3 +25,20 @@ def medecin(request):
 def patients(request):
    
     return render(request, 'diab/patients.html')
+
+def antecedant(request):
+   
+    return render(request, 'diab/medical_history.html')
+def dossier(request):
+   
+    return render(request, 'diab/dossier.html')
+
+def profile(request):
+   
+    return render(request, 'diab/profile.html')
+def historic_consult(request):
+   
+    return render(request, 'diab/consultation_history.html')
+def consult(request):
+   
+    return render(request, 'diab/consultation.html')

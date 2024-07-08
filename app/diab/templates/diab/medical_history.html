@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antécédents Médicaux - Application Hôpital</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/diab/css/flowbite.min-2.3.0.css' %}">
+    <script src="{% static '/diab/js/flowbite.min-2.3.0.js' %}"></script>
+    <script src="{% static '/diab/js/gsap.min.js'%}"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#3b82f6',
+                        'secondary': '#10b981',
+                        'accent': '#f59e0b',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* .neumorphic {
+            box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff;
+        }
+        .neumorphic-inset {
+            box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff;
+        } */
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .bg-primary
+        {
+            background-color:#3498db !important ;
+        }
+        .bg-secondary
+        {
+            background-color:#2ecc71 !important  ;
+        }
+        .text-primary
+        {
+           color:#3498db !important ;
+        }
+        .text-secondary
+        {
+            color:#2ecc71 !important  ;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-primary">Antécédents Médicaux</h1>
+            <nav>
+                <a href="#" class="text-gray-600 hover:text-primary mr-4">Accueil</a>
+                <a href="#" class="text-gray-600 hover:text-primary">Tableau de bord</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="md:col-span-1">
+                
+                <div class="bg-white neumorphic rounded-lg p-6">
+                    <h2 class="text-2xl font-semibold mb-4">Liste des Antécédents</h2>
+                    <ul id="medicalHistoryList" class="space-y-2">
+                        <!-- La liste des antécédents sera ajoutée ici dynamiquement -->
+                    </ul>
+                    <button id="addNewHistory" class="mt-4 bg-secondary text-white font-semibold py-2 px-4 rounded-md neumorphic btn-hover w-full">
+                        Ajouter un antécédent
+                    </button>
+                    
+                </div>
+            </div>
+            <div class="md:col-span-2  ">
+                <div id="medicalHistoryDetails" class="bg-white neumorphic rounded-lg p-6 hidden">
+                    <h2 id="medicalHistoryTitle" class="text-2xl font-semibold mb-4"></h2>
+                    <form id="medicalHistoryForm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="condition" class="block text-sm font-medium text-gray-700 mb-1">Condition / Maladie</label>
+                                <input type="text" id="condition" name="condition" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            <div>
+                                <label for="diagnosisDate" class="block text-sm font-medium text-gray-700 mb-1">Date de diagnostic</label>
+                                <input type="date" id="diagnosisDate" name="diagnosisDate" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="treatment" class="block text-sm font-medium text-gray-700 mb-1">Traitement</label>
+                            <input type="text" id="treatment" name="treatment" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div class="mb-4">
+                            <label for="medications" class="block text-sm font-medium text-gray-700 mb-1">Médicaments</label>
+                            <input type="text" id="medications" name="medications" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div class="mb-4">
+                            <label for="allergies" class="block text-sm font-medium text-gray-700 mb-1">Allergies</label>
+                            <input type="text" id="allergies" name="allergies" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div class="mb-4">
+                            <label for="surgeries" class="block text-sm font-medium text-gray-700 mb-1">Interventions chirurgicales</label>
+                            <textarea id="surgeries" name="surgeries" rows="3" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label for="familyHistory" class="block text-sm font-medium text-gray-700 mb-1">Antécédents familiaux</label>
+                            <textarea id="familyHistory" name="familyHistory" rows="3" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notes supplémentaires</label>
+                            <textarea id="notes" name="notes" rows="4" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button type="button" id="cancelButton" class="bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-md neumorphic btn-hover">
+                                <i class="fas fa-times mr-2"></i>Annuler
+                            </button>
+                            <button type="submit" class="bg-primary text-white font-semibold py-2 px-4 rounded-md neumorphic btn-hover">
+                                <i class="fas fa-save mr-2"></i>Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white py-4 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>&copy; 2024 Application Hôpital. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Données d'exemple pour les antécédents médicaux
+        let medicalHistories = [
+            { id: 1, condition: "Hypertension", diagnosisDate: "2020-03-15", treatment: "Régime pauvre en sel, exercice régulier", medications: "Lisinopril 10mg", allergies: "Pénicilline", surgeries: "Appendicectomie (2010)", familyHistory: "Père: diabète, Mère: cancer du sein", notes: "Contrôle de la tension artérielle tous les 3 mois" },
+            { id: 2, condition: "Asthme", diagnosisDate: "2015-07-22", treatment: "Éviter les déclencheurs, utiliser un inhalateur au besoin", medications: "Salbutamol (inhalateur)", allergies: "Pollen, acariens", surgeries: "Aucune", familyHistory: "Frère: asthme", notes: "Exacerbations saisonnières, principalement au printemps" },
+            { id: 3, condition: "Diabète de type 2", diagnosisDate: "2018-11-30", treatment: "Régime équilibré, activité physique régulière", medications: "Metformine 500mg", allergies: "Aucune connue", surgeries: "Cholécystectomie (2016)", familyHistory: "Père et grand-mère paternelle: diabète de type 2", notes: "Surveillance glycémique quotidienne" }
+        ];
+
+        const medicalHistoryList = document.getElementById('medicalHistoryList');
+        const medicalHistoryDetails = document.getElementById('medicalHistoryDetails');
+        const medicalHistoryForm = document.getElementById('medicalHistoryForm');
+        const medicalHistoryTitle = document.getElementById('medicalHistoryTitle');
+        const cancelButton = document.getElementById('cancelButton');
+        const addNewHistory = document.getElementById('addNewHistory');
+
+        // Fonction pour afficher la liste des antécédents médicaux
+        function displayMedicalHistoryList() {
+            medicalHistoryList.innerHTML = '';
+            medicalHistories.forEach(history => {
+                const li = document.createElement('li');
+                li.className = 'bg-gray-50 p-3 rounded-md neumorphic cursor-pointer hover:bg-gray-100 transition-colors duration-200';
+                li.innerHTML = `
+                    <h3 class="font-semibold">${history.condition}</h3>
+                    <p class="text-sm text-gray-600">${history.diagnosisDate}</p>
+                `;
+                li.addEventListener('click', () => displayMedicalHistoryDetails(history));
+                medicalHistoryList.appendChild(li);
+            });
+        }
+
+        // Fonction pour afficher les détails d'un antécédent médical
+        function displayMedicalHistoryDetails(history) {
+            medicalHistoryTitle.textContent = history.condition;
+            document.getElementById('condition').value = history.condition;
+            document.getElementById('diagnosisDate').value = history.diagnosisDate;
+            document.getElementById('treatment').value = history.treatment;
+            document.getElementById('medications').value = history.medications;
+            document.getElementById('allergies').value = history.allergies;
+            document.getElementById('surgeries').value = history.surgeries;
+            document.getElementById('familyHistory').value = history.familyHistory;
+            document.getElementById('notes').value = history.notes;
+            medicalHistoryDetails.classList.remove('hidden');
+            
+            gsap.from(medicalHistoryDetails, {
+                opacity: 0,
+                y: 20,
+                duration: 0.5,
+                ease: "power2.out"
+            });
+        }
+
+        // Gérer la soumission du formulaire
+        medicalHistoryForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(medicalHistoryForm);
+            const updatedHistory = Object.fromEntries(formData.entries());
+            console.log('Antécédent médical mis à jour:', updatedHistory);
+            // Ici, vous enverriez normalement ces données à votre backend
+            showNotification('Antécédent médical enregistré avec succès!', 'success');
+        });
+
+        // Gérer l'annulation
+        cancelButton.addEventListener('click', () => {
+            medicalHistoryDetails.classList.add('hidden');
+        });
+
+        // Gérer l'ajout d'un nouvel antécédent
+        addNewHistory.addEventListener('click', () => {
+            medicalHistoryTitle.textContent = "Nouvel Antécédent Médical";
+            medicalHistoryForm.reset();
+            medicalHistoryDetails.classList.remove('hidden');
+            
+            gsap.from(medicalHistoryDetails, {
+                opacity: 0,
+                y: 20,
+                duration: 0.5,
+                ease: "power2.out"
+            });
+        });
+
+        // Fonction pour afficher une notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-4 right-4 p-4 rounded-md ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            gsap.from(notification, {
+                opacity: 0,
+                y: 50,
+                duration: 0.5,
+                ease: "power2.out"
+            });
+
+            setTimeout(() => {
+                gsap.to(notification, {
+                    opacity: 0,
+                    y: 50,
+                    duration: 0.5,
+                    ease: "power2.in",
+                    onComplete: () => notification.remove()
+                });
+            }, 3000);
+        }
+
+        // Initialiser la page
+        displayMedicalHistoryList();
+
+        // // Animation initiale
+        // gsap.from(".neumorphic", {
+        //     opacity: 0,
+        //     y: 50,
+        //     duration: 1,
+        //     stagger: 0.2,
+        //     ease: "power3.out"
+        // });
+    </script>
+</body>
+</html>

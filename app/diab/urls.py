@@ -11,4 +11,10 @@ urlpatterns = [
     path("signin", views.signin, name="signin"),
     path("medecin", views.medecin, name="medecin"),
     path("patients", views.patients, name="patients"),
+    path("antecedant", views.antecedant, name="antecedant"),
+    path("dossier", views.dossier, name="dossier"),
+    path("profile", views.profile, name="profile"),
+    path("historic_consult", views.historic_consult, name="historic_consult"),
+    path("consult", views.consult, name="consult"),
+    
 ]

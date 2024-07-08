@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation - Application Hôpital</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/diab/css/flowbite.min-2.3.0.css' %}">
+    <script src="{% static '/diab/js/flowbite.min-2.3.0.js' %}"></script>
+    <script src="{% static '/diab/js/gsap.min.js'%}"></script>
+
+    <link rel="stylesheet" href="{% static '/diab/css/all.min.css' %}">
+    <link href="{% static '/diab/css/css2.css' %}" rel="stylesheet">
+    <script src="{% static '/diab/js/chart.js' %}"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#3b82f6',
+                        'secondary': '#10b981',
+                        'accent': '#f59e0b',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .neumorphic {
+            box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff;
+        }
+        .neumorphic-inset {
+            box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff;
+        }
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 100%;
+        }
+        .bg-primary
+        {
+            background-color:#3498db !important ;
+        }
+        .bg-secondary
+        {
+            background-color:#2ecc71 !important  ;
+        }
+        .text-primary
+        {
+           color:#3498db !important ;
+        }
+        .text-secondary
+        {
+            color:#2ecc71 !important  ;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <!-- <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-primary">Consultation</h1>
+            <nav>
+                <a href="#" class="text-gray-600 hover:text-primary mr-4">Accueil</a>
+                <a href="#" class="text-gray-600 hover:text-primary">Tableau de bord</a>
+            </nav>
+        </div>
+    </header> -->
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white neumorphic rounded-lg p-6">
+                <h2 class="text-2xl font-semibold mb-4">Informations du Patient</h2>
+                <div class="mb-4">
+                    <label for="patientId" class="block text-sm font-medium text-gray-700 mb-1">ID du Patient</label>
+                    <input type="text" id="patientId" name="patientId" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary" readonly>
+                </div>
+                <div class="mb-4">
+                    <label for="patientName" class="block text-sm font-medium text-gray-700 mb-1">Nom du Patient</label>
+                    <input type="text" id="patientName" name="patientName" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary" readonly>
+                </div>
+                <a href="#" id="patientFileLink" class="text-primary hover:underline">Voir le dossier du patient</a>
+            </div>
+
+            <div class="bg-white neumorphic rounded-lg p-6">
+                <h2 class="text-2xl font-semibold mb-4">Diagnostic</h2>
+                <textarea id="diagnostic" name="diagnostic" rows="4" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+            </div>
+        </div>
+
+        <div class="mt-8 bg-white neumorphic rounded-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">Plan de Traitement</h2>
+            <textarea id="treatmentPlan" name="treatmentPlan" rows="4" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+        </div>
+
+        <div class="mt-8 bg-white neumorphic rounded-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">Prescription</h2>
+            <textarea id="prescription" name="prescription" rows="4" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+        </div>
+
+        <div class="mt-8 bg-white neumorphic rounded-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">Recommandations</h2>
+            <textarea id="recommendations" name="recommendations" rows="4" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+        </div>
+
+        <div class="mt-8 bg-white neumorphic rounded-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">Examens</h2>
+            <div id="examinationsContainer">
+                <!-- Les examens seront ajoutés ici dynamiquement -->
+            </div>
+            <button id="addExamination" class="mt-4 bg-secondary text-white font-semibold py-2 px-4 rounded-md neumorphic btn-hover">
+                Ajouter un Examen
+            </button>
+            <a href="examination_results.html" class="ml-4 text-primary hover:underline">Voir les résultats des examens</a>
+        </div>
+
+        <div class="mt-8 bg-white neumorphic rounded-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">Autres Informations</h2>
+            <textarea id="otherInfo" name="otherInfo" rows="4" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+        </div>
+
+        <button id="saveConsultation" class="mt-8 w-full bg-primary text-white font-semibold py-3 px-4 rounded-md neumorphic btn-hover">
+            Enregistrer la Consultation
+        </button>
+        <a href="#" class="mt-4 block text-center text-primary hover:underline">Retour à l'accueil</a>
+    </main>
+
+    <footer class="bg-white py-4 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>&copy; 2023 Application Hôpital. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    
+
+    <script>
+        const DateTime = luxon.DateTime;
+        let examinationCount = 0;
+
+        function addExaminationField() {
+            examinationCount++;
+            const container = document.createElement('div');
+            container.className = 'bg-gray-50 p-4 rounded-md mb-4 neumorphic';
+            container.innerHTML = `
+                <h3 class="text-lg font-semibold mb-2">Examen ${examinationCount}</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="examinationType${examinationCount}" class="block text-sm font-medium text-gray-700 mb-1">Type d'Examen</label>
+                        <input type="text" id="examinationType${examinationCount}" name="examinationType${examinationCount}" required class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label for="examinationDate${examinationCount}" class="block text-sm font-medium text-gray-700 mb-1">Date de l'Examen</label>
+                        <input type="date" id="examinationDate${examinationCount}" name="examinationDate${examinationCount}" required class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label for="examinationComment${examinationCount}" class="block text-sm font-medium text-gray-700 mb-1">Commentaire</label>
+                    <textarea id="examinationComment${examinationCount}" name="examinationComment${examinationCount}" rows="3" class="w-full px-4 py-2 rounded-md neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                </div>
+            `;
+            document.getElementById('examinationsFormContainer').appendChild(container);
+
+            // Animation for new examination field
+            gsap.from(container, {
+                opacity: 0,
+                y: 20,
+                duration: 0.5,
+                ease: "power2.out"
+            });
+        }
+
+        function showModal() {
+            document.getElementById('examinationModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('examinationModal').classList.add('hidden');
+        }
+
+        document.getElementById('addExamination').addEventListener('click', showModal);
+        document.getElementById('addExaminationField').addEventListener('click', addExaminationField);
+        document.getElementById('saveExamination').addEventListener('click', function() {
+            const examinations = [];
+            for (let i = 1; i <= examinationCount; i++) {
+                examinations.push({
+                    type: document.getElementById(`examinationType${i}`).value,
+                    date: document.getElementById(`examinationDate${i}`).value,
+                    comment: document.getElementById(`examinationComment${i}`).value
+                });
+            }
+
+            // Afficher les examens dans le conteneur principal
+            const examinationsContainer = document.getElementById('examinationsContainer');
+            examinationsContainer.innerHTML = ''; // Clear previous content
+            examinations.forEach((exam, index) => {
+                const examDiv = document.createElement('div');
+                examDiv.className = 'bg-gray-50 p-4 rounded-md mb-4 neumorphic';
+                examDiv.innerHTML = `
+                    <h3 class="text-lg font-semibold mb-2">Examen ${index + 1}</h3>
+                    <p><strong>Type:</strong> ${exam.type}</p>
+                    <p><strong>Date:</strong> ${exam.date}</p>
+                    <p><strong>Commentaire:</strong> ${exam.comment}</p>
+                `;
+                examinationsContainer.appendChild(examDiv);
+            });
+
+            closeModal();
+        });
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+
+        document.getElementById('saveConsultation').addEventListener('click', function() {
+            const consultationData = {
+                patientId: document.getElementById('patientId').value,
+                patientName: document.getElementById('patientName').value,
+                diagnostic: document.getElementById('diagnostic').value,
+                treatmentPlan: document.getElementById('treatmentPlan').value,
+                prescription: document.getElementById('prescription').value,
+                recommendations: document.getElementById('recommendations').value,
+                otherInfo: document.getElementById('otherInfo').value,
+                examinations: []
+            };
+
+            for (let i = 1; i <= examinationCount; i++) {
+                consultationData.examinations.push({
+                    type: document.getElementById(`examinationType${i}`).value,
+                    date: document.getElementById(`examinationDate${i}`).value,
+                    comment: document.getElementById(`examinationComment${i}`).value
+                });
+            }
+
+            console.log('Données de consultation:', consultationData);
+            // Ici, vous enverriez normalement ces données à votre backend
+
+            // Afficher un message de confirmation
+            alert('Consultation enregistrée avec succès!');
+        });
+
+        // Fonction pour charger les données du patient (à implémenter)
+        function loadPatientData() {
+            // Simuler le chargement des données du patient
+            document.getElementById('patientId').value = 'P12345';
+            document.getElementById('patientName').value = 'Jean Dupont';
+        }
+
+        // Charger les données du patient au chargement de la page
+        loadPatientData();
+
+        // Animation initiale
+        // gsap.from(".neumorphic", {
+        //     opacity: 0,
+        //     y: 50,
+        //     duration: 1,
+        //     stagger: 0.2,
+        //     ease: "power3.out"
+        // });
+    </script>
+</body>
+</html>

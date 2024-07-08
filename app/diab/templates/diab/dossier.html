@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dossier Médical du Patient - Application Hôpital</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/diab/css/flowbite.min-2.3.0.css' %}">
+    <script src="{% static '/diab/js/flowbite.min-2.3.0.js' %}"></script>
+    <script src="{% static '/diab/js/gsap.min.js'%}"></script>
+
+    <link rel="stylesheet" href="{% static '/diab/css/all.min.css' %}">
+    <link href="{% static '/diab/css/css2.css' %}" rel="stylesheet">
+    <script src="{% static '/diab/js/chart.js' %}"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#3b82f6',
+                        'secondary': '#10b981',
+                        'accent': '#f59e0b',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .neumorphic {
+            box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff;
+        }
+        .neumorphic-inset {
+            box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+            .print-only {
+                display: block !important;
+            }
+        }
+        .bg-primary
+        {
+            background-color:#3498db !important ;
+        }
+        .bg-secondary
+        {
+            background-color:#2ecc71 !important  ;
+        }
+        .text-primary
+        {
+           color:#3498db !important ;
+        }
+        .text-secondary
+        {
+            color:#2ecc71 !important  ;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+    <!-- <header class="bg-white shadow-md no-print">
+        <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-primary">Dossier Médical du Patient</h1>
+            <nav>
+                <a href="#" class="text-gray-600 hover:text-primary mr-4">Accueil</a>
+                <a href="#" class="text-gray-600 hover:text-primary">Tableau de bord</a>
+            </nav>
+        </div>
+    </header> -->
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Informations du patient -->
+            <div class="bg-white neumorphic rounded-lg p-6 col-span-2">
+                <h2 class="text-2xl font-semibold mb-4">Informations du Patient</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p><strong>Nom:</strong> <span id="patientName"></span></p>
+                        <p><strong>Date de naissance:</strong> <span id="patientDOB"></span></p>
+                        <p><strong>Sexe:</strong> <span id="patientGender"></span></p>
+                    </div>
+                    <div>
+                        <p><strong>Numéro de dossier:</strong> <span id="patientID"></span></p>
+                        <p><strong>Téléphone:</strong> <span id="patientPhone"></span></p>
+                        <p><strong>Email:</strong> <span id="patientEmail"></span></p>
+                    </div>
+                </div>
+                <button onclick="printMedicalRecord()" class="mt-4 bg-primary text-white font-semibold py-2 px-4 rounded-md neumorphic no-print">
+                    Imprimer le dossier
+                </button>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="bg-white neumorphic rounded-lg p-6">
+                <h2 class="text-2xl font-semibold mb-4">Statistiques</h2>
+                <p><strong>Nombre de consultations:</strong> <span id="consultationCount"></span></p>
+                <p><strong>Dernière consultation:</strong> <span id="lastConsultation"></span></p>
+                <p><strong>Prochain rendez-vous:</strong> <span id="nextAppointment"></span></p>
+                <a href="#" class="text-primary hover:underline mt-4 inline-block">Voir toutes les consultations</a>
+            </div>
+
+            <!-- Informations sur le diabète -->
+            <div class="bg-white neumorphic rounded-lg p-6 col-span-2">
+                <h2 class="text-2xl font-semibold mb-4">Informations sur le Diabète</h2>
+                <div class="mb-4">
+                    <h3 class="text-xl font-semibold mb-2">Résultats des tests récents</h3>
+                    <table class="w-full">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Test</th>
+                                <th class="text-left">Résultat</th>
+                                <th class="text-left">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="diabetesTestResults">
+                            <!-- Les résultats des tests seront ajoutés ici dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mb-4">
+                    <h3 class="text-xl font-semibold mb-2">Progression du diabète</h3>
+                    <canvas id="diabetesProgressionChart"></canvas>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Statut de rémission</h3>
+                    <p id="remissionStatus"></p>
+                </div>
+            </div>
+
+            <!-- Avis des médecins -->
+            <div class="bg-white neumorphic rounded-lg p-6">
+                <h2 class="text-2xl font-semibold mb-4">Derniers Avis Médicaux</h2>
+                <ul id="medicalOpinions" class="space-y-2">
+                    <!-- Les avis médicaux seront ajoutés ici dynamiquement -->
+                </ul>
+                <a href="#" class="text-primary hover:underline mt-4 inline-block">Voir tous les avis</a>
+            </div>
+        </div>
+
+        <!-- Liens rapides -->
+        <div class="mt-6 bg-white neumorphic rounded-lg p-6 no-print">
+            <!-- <h2 class="text-2xl font-semibold mb-4">Liens Rapides</h2> -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- <a href="#" class="bg-primary text-white font-semibold py-2 px-4 rounded-md text-center">Antécédents Médicaux</a>
+                <a href="#" class="bg-secondary text-white font-semibold py-2 px-4 rounded-md text-center">Ordonnances</a>
+                <a href="#" class="bg-accent text-white font-semibold py-2 px-4 rounded-md text-center">Résultats d'Examens</a> -->
+                <a href="#" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded-md text-center">Retour</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white py-4 mt-8 no-print">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>&copy; 2023 Application Hôpital. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Données d'exemple pour le patient
+        const patientData = {
+            name: "Jean Dupont",
+            dob: "15/05/1980",
+            gender: "Homme",
+            id: "PAT12345",
+            phone: "01 23 45 67 89",
+            email: "jean.dupont@email.com",
+            consultationCount: 15,
+            lastConsultation: "10/05/2023",
+            nextAppointment: "25/06/2023",
+            diabetesTests: [
+                { test: "HbA1c", result: "6.5%", date: "10/05/2023" },
+                { test: "Glycémie à jeun", result: "126 mg/dL", date: "10/05/2023" },
+                { test: "Test de tolérance au glucose", result: "180 mg/dL", date: "05/05/2023" },
+            ],
+            diabetesProgression: [
+                { date: "01/01/2023", hba1c: 7.2 },
+                { date: "01/03/2023", hba1c: 6.8 },
+                { date: "01/05/2023", hba1c: 6.5 },
+            ],
+            remissionStatus: "En rémission partielle - Continuez à suivre le traitement et le régime prescrit.",
+            medicalOpinions: [
+                { doctor: "Dr. Martin", date: "10/05/2023", opinion: "Amélioration significative du contrôle glycémique. Continuer le traitement actuel." },
+                { doctor: "Dr. Dubois", date: "15/04/2023", opinion: "Ajustement du dosage d'insuline recommandé. Surveillance étroite de la glycémie conseillée." },
+            ],
+        };
+
+        // Fonction pour remplir les informations du patient
+        function fillPatientInfo() {
+            document.getElementById("patientName").textContent = patientData.name;
+            document.getElementById("patientDOB").textContent = patientData.dob;
+            document.getElementById("patientGender").textContent = patientData.gender;
+            document.getElementById("patientID").textContent = patientData.id;
+            document.getElementById("patientPhone").textContent = patientData.phone;
+            document.getElementById("patientEmail").textContent = patientData.email;
+            document.getElementById("consultationCount").textContent = patientData.consultationCount;
+            document.getElementById("lastConsultation").textContent = patientData.lastConsultation;
+            document.getElementById("nextAppointment").textContent = patientData.nextAppointment;
+        }
+
+        // Fonction pour remplir les résultats des tests de diabète
+        function fillDiabetesTestResults() {
+            const tbody = document.getElementById("diabetesTestResults");
+            patientData.diabetesTests.forEach(test => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = test.test;
+                row.insertCell(1).textContent = test.result;
+                row.insertCell(2).textContent = test.date;
+            });
+        }
+
+        // Fonction pour créer le graphique de progression du diabète
+        function createDiabetesProgressionChart() {
+            const ctx = document.getElementById('diabetesProgressionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: patientData.diabetesProgression.map(data => data.date),
+                    datasets: [{
+                        label: 'HbA1c (%)',
+                        data: patientData.diabetesProgression.map(data => data.hba1c),
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Fonction pour afficher le statut de rémission
+        function displayRemissionStatus() {
+            document.getElementById("remissionStatus").textContent = patientData.remissionStatus;
+        }
+
+        // Fonction pour afficher les avis médicaux
+        function displayMedicalOpinions() {
+            const ul = document.getElementById("medicalOpinions");
+            patientData.medicalOpinions.forEach(opinion => {
+                const li = document.createElement("li");
+                li.innerHTML = `<strong>${opinion.doctor}</strong> (${opinion.date}): ${opinion.opinion}`;
+                ul.appendChild(li);
+            });
+        }
+
+        // Fonction pour imprimer le dossier médical
+        function printMedicalRecord() {
+            window.print();
+        }
+
+        // Initialisation de la page
+        document.addEventListener("DOMContentLoaded", function() {
+            fillPatientInfo();
+            fillDiabetesTestResults();
+            createDiabetesProgressionChart();
+            displayRemissionStatus();
+            displayMedicalOpinions();
+
+            // Animation d'entrée
+            gsap.from(".neumorphic", {
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power3.out"
+            });
+        });
+    </script>
+</body>
+</html>
