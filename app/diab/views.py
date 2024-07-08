@@ -17,3 +17,11 @@ def logout(request):
 def signin(request):
    
     return render(request, 'diab/register.html')
+
+def medecin(request):
+   
+    return render(request, 'diab/medecin.html')
+
+def patients(request):
+   
+    return render(request, 'diab/patients.html')
