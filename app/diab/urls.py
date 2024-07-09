@@ -17,7 +17,7 @@ urlpatterns = [
     path("", index.index, name="index"),
 
     path("login",login.login, name="login"),
-    path("connexion",connexion.connexion, name="login"),
+    path("connexion",connexion.connexion, name="connexion"),
 
     path("signin",signin.signin, name="signin"),
     path("medecin",medecin.medecin, name="medecin"),

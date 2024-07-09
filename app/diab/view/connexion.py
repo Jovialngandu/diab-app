@@ -11,7 +11,7 @@ def connexion(request):
         user = authenticate(username = nameuser, password = passwords)
 
         if user is not None:
-            redirect('/diab')
-        else:
-            request.session['error']={ "message": "Nom d'utilisateur ou mot de passe incorrect"}
-            redirect('/diab/login')
+            return redirect('/diab')
+        
+        request.session['error']={ "message": "Nom d'utilisateur ou mot de passe incorrect"}
+        return redirect('/diab/login')
