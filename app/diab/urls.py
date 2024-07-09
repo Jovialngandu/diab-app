@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-from  diab.view import index
+from diab.view import index
 from diab.view import profile
 from diab.view import patients
 from diab.view import dossier
