@@ -44,12 +44,32 @@
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-primary">H-hopital</h1>
+            <nav class="lien">
+                <a href="{% url 'diab:index' %}" style="font-weight:bold; color: #908e9b;" class="hover:text-primary text-gray-600 p-3">Accueil</a>
+                <a href="{% url 'diab:patients' %}" style="font-weight:bold; color: #908e9b;" class="hover:text-primary text-gray-600 p-3">Patient</a>
+                <a href="{% url 'diab:historic_consult' %}" style="font-weight:bold; color: #908e9b;" class="hover:text-primary text-gray-600 p-3">Consultation</a>
+                <a href="{% url 'diab:medecin' %}" style="font-weight:bold; color: #908e9b;" class="hover:text-primary text-gray-600 p-3">Medecin</a>
+            </nav>
+
+            <aside>
+                <button class="bg-secondary text-white px-6 py-2 rounded-md hover:bg-green-600 transition duration-300 w-full sm:w-auto">
+                    <a href="{% url 'diab:signin' %}">Sig in </a>
+                </button>
+                <button style="font-weight:bold;" class="text-black px-6 py-2 rounded-md hover:bg-green-600 transition duration-300 w-full sm:w-auto">
+                    <a href="{% url 'diab:login' %}">Login</a>
+                </button>
+            </aide>
+        </div>
+    </header>
   
     <div class="container mx-auto px-4 py-8">
-        <!-- <header class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <header class="bg-white shadow-md rounded-lg p-6 mb-8">
             <h1 class="text-3xl font-bold text-primary">Gestion des Patients Diabétiques</h1>
             <p class="text-gray-600">Hôpital Central - Service d'Endocrinologie</p>
-        </header> -->
+        </header>
 
         <main class="bg-white shadow-md rounded-lg p-6">
             <div class="flex justify-between items-center mb-6">
@@ -146,7 +166,7 @@
                        <a href="/diab/signin"> Ajouter un nouveau Médecin</a>
                     </button> -->
                     <button class="bg-secondary text-white px-6 py-3 rounded-md hover:bg-green-600 transition duration-300 w-full sm:w-auto">
-                        <a href="/diab/">Retour à l'accueil </a>
+                        <a href="{% url 'diab:index' %}">Retour à l'accueil </a>
                     </button>
                 </div>
             </div>
