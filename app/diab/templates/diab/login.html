@@ -38,10 +38,12 @@
                 <p class="text-gray-600 mt-2">Login to your account</p>
             </div>
 
-            <form>
+            <form action="connexion" method="post">
+                {% csrf_token %}
+
                 <div class="mb-6">
-                    <label for="email" class="block text-gray-700 text-sm font-medium mb-2">Email Address</label>
-                    <input type="email" id="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    <label for="username" class="block text-gray-700 text-sm font-medium mb-2">Username</label>
+                    <input type="username" id="username" name="username" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
                 </div>
                 <div class="mb-6">
                     <label for="password" class="block text-gray-700 text-sm font-medium mb-2">Password</label>
