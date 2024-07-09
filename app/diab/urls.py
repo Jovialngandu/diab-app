@@ -18,6 +18,7 @@ urlpatterns = [
 
     path("login",login.login, name="login"),
     path("connexion",connexion.connexion, name="connexion"),
+    path("back-signin",signin.signup, name="back-signin"),
 
     path("signin",signin.signin, name="signin"),
     path("medecin",medecin.medecin, name="medecin"),
