@@ -10,3 +10,4 @@ import diab.Model.Antecedent
 import diab.Model.Consultation
 import diab.Model.Test
 import diab.Model.TestPlug
+import diab.Model.RemissionHistory
